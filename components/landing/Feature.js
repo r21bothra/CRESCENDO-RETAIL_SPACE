@@ -9,13 +9,12 @@ const Feature = () => {
           <div className="row">
             <div className="col-lg-12 col-sm-12">
               <div className="dreamit-section-title text-center up pb-5">
-                <h4>Crypto Features</h4>
+                <h4>Services</h4>
                 <h1 className="mt-1">
-                  <span>Ecosystem/ Coming Soon</span>
+                  <span>Run your shop smarter not harder</span>
                 </h1>
                 <p className="section-text">
-                  Cryptocurrencies are used primarily outside existing banking
-                  and coingovernmental institutions and are exchanged
+                  Automated Inventory management, Profit Margin Optimization, Seasonal Variation 
                 </p>
               </div>
             </div>
@@ -39,11 +38,9 @@ const Feature = () => {
                     />
                   </div>
                   <div className="feature-title">
-                    <h3>GPay Metaverse</h3>
+                    <h3>Product Popularity Algorithm</h3>
                     <p>
-                      Step into the future with our Metaverse. A virtual realm
-                      where imagination meets reality, redefining social
-                      interactions and experiences.
+                    Analyzes historical sales data, customer behavior, and market trends to identify popular products and predict future demand.
                     </p>
                   </div>
                 </div>
@@ -67,11 +64,9 @@ const Feature = () => {
                     />
                   </div>
                   <div className="feature-title">
-                    <h3>GPay NFT</h3>
+                    <h3>Seasonal Variation Management</h3>
                     <p>
-                      Unlock rare digital art and collectibles with NFTs. Own
-                      unique assets on the blockchain, redefining ownership and
-                      creativity.
+                    Tracks historical sales data for different seasons and identifies patterns in product demand.
                     </p>
                   </div>
                 </div>
@@ -95,11 +90,9 @@ const Feature = () => {
                     />
                   </div>
                   <div className="feature-title">
-                    <h3>GPay Infinity</h3>
+                    <h3>Profit Margin Optimization Tools</h3>
                     <p>
-                      Experience boundless fun and competition with Infinity
-                      Gaming. Explore limitless worlds of entertainment and
-                      skill-based challenges.
+                    Calculates product costs, including manufacturing, shipping, and marketing expenses.
                     </p>
                   </div>
                 </div>
@@ -123,10 +116,9 @@ const Feature = () => {
                     />
                   </div>
                   <div className="feature-title">
-                    <h3>Deal GPay</h3>
+                    <h3>User-Friendly Interface</h3>
                     <p>
-                      Dealgdcc: Your One-Stop Solution! 🌟 From Brands to Health
-                      Care, Travel to Bills, We&apos;ve Got You Covered!
+                    Offers a clean and intuitive dashboard for easy navigation and data visualization.
                     </p>
                   </div>
                 </div>
@@ -150,11 +142,9 @@ const Feature = () => {
                     />
                   </div>
                   <div className="feature-title">
-                    <h3>GPay Farming</h3>
+                    <h3>Interactive Data Visualization</h3>
                     <p>
-                      Maximize returns in decentralized finance. Explore Yield
-                      Farming for optimal rewards and liquidity provision on the
-                      blockchain.
+                    Presents data in various formats like charts, graphs, and tables for easy comprehension.
                     </p>
                   </div>
                 </div>
@@ -178,11 +168,9 @@ const Feature = () => {
                     />
                   </div>
                   <div className="feature-title">
-                    <h3>GPay Lauchpad</h3>
+                    <h3>Actionable Insights and Recommendations</h3>
                     <p>
-                      Elevate projects with our Launchpad. Fuel innovation,
-                      attract investors, and propel ideas from concept to
-                      reality efficiently.
+                    Translates data analysis into actionable recommendations for product management, marketing, and pricing strategies.
                     </p>
                   </div>
                 </div>

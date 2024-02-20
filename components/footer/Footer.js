@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
 import React from "react";
 import Image from "next/image";
-import logo from "../../styles/assets/Gpaylogo.png";
+import logo from "../../components/assets/Gpaylogo.png";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 
@@ -25,9 +25,7 @@ const Footer = () => {
                 </div>
                 <div className="company-info-desc ">
                   <p className="footer-content">
-                    Global Pay is a leading platform for secure and seamless
-                    transactions in the world of cryptocurrencies, with a
-                    primary focus on USDT transactions.
+                  Empower your business with data-driven inventory management – optimize popularity, navigate seasons, and maximize profits.
                   </p>
                 </div>
                 {/* Footer share icons */}
@@ -128,7 +126,7 @@ const Footer = () => {
             <div className="col-lg-12 col-md-12 col-sm-12">
               <div className="footer-bottom-content">
                 <div className="footer-bottom-content-copy">
-                  <p>© GPay all Rights Reserved.</p>
+                  <p>© R Space all Rights Reserved.</p>
                 </div>
               </div>
             </div>

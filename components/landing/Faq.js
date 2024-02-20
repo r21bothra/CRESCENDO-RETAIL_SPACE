@@ -3,33 +3,33 @@ import React, { useState } from "react";
 const Faq = () => {
   const [accordionItems, setAccordionItems] = useState([
     {
-      title: "Do I need to complete KYC (Know Your Customer) verification?",
+      title: "How does the product popularity algorithm work?",
       content:
-        "Yes, for security and regulatory compliance, we require all users to complete KYC verification. This helps us ensure the safety and legitimacy of all transactions.",
+        "Our algorithm analyzes historical sales data, customer behavior, and market trends to identify popular products and predict future demand. This helps you prioritize inventory, plan promotions, and make informed decisions about product placement.",
       isOpen: false,
     },
     {
-      title: "How can I buy tokens on your platform?",
+      title: "How can I use the website to manage seasonal variations in demand?",
       content:
-        "Buying tokens on our platform is easy. You can start by creating an account, verifying your identity, and then depositing funds. Once your account is funded, you can place buy orders for the tokens you want.",
+        "The website tracks past sales data for different seasons and identifies patterns. It then generates forecasts and suggests adjustments to inventory levels and pricing strategies to avoid stockouts or overstocking during peak and off-peak seasons.",
       isOpen: false,
     },
     {
-      title: "Are my transactions secure?",
+      title: "Does the website help me optimize my profit margins?",
       content:
-        "Yes, we take security seriously. Our platform uses advanced encryption and security measures to protect your transactions and personal information.",
+        "Yes, the website provides tools to calculate product costs and suggest optimal pricing strategies based on your desired profit margins and market competition. It also identifies areas for cost-saving opportunities and helps you track your overall profitability.",
       isOpen: false,
     },
     {
-      title: "Can I sell my tokens on your platform?",
+      title: "Is the website user-friendly for someone with no prior experience in inventory management?",
       content:
-        "Absolutely! You can sell your tokens on our platform by creating a sell order. Once the order is matched with a buyer, you'll receive the equivalent amount in your account.",
+        "Absolutely! We prioritize a clean and intuitive interface with clear information about product performance, inventory levels, and profit margins. You can customize your dashboard and access various data visualizations for easy comprehension.",
       isOpen: false,
     },
     {
-      title: "Can I trade cryptocurrencies other than Bitcoin and Ethereum?",
+      title: "What kind of support do you offer to help me get started with the website?",
       content:
-        "Yes, we offer a wide range of cryptocurrencies for trading. You can explore various altcoins and tokens on our platform.",
+        "We offer a comprehensive range of support resources, including detailed tutorials, FAQs, and a dedicated customer support team. We also provide training materials and webinars to help you understand the platform and leverage its features effectively.",
       isOpen: false,
     },
     // Add more accordion items here
@@ -59,8 +59,7 @@ const Faq = () => {
                 Question & <span>Answer</span>
               </h1>
               <p className="section-text">
-                Cryptocurrencies are used primarily outside existing banking
-                governmental institutions and exchanged
+              Welcome to our Q&A forum! We're here to answer your questions about our inventory management website and how it can help you optimize your business. 
               </p>
             </div>
           </div>

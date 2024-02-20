@@ -20,22 +20,7 @@ const Contact = () => {
   };
   const handleContact = async (e) => {
     e.preventDefault();
-    await axios
-      .post(" api/auth/contact-form", {
-        name: contact.name,
-        email: contact.email,
-        subject: contact.subject,
-        message: contact.message,
-      })
-      .then(() => {
-        setcontact({
-          name: "",
-          email: "",
-          subject: "",
-          message: "",
-        });
-        toast.success("Your message sent successfully ");
-      });
+    
   };
   return (
     <>
@@ -95,9 +80,9 @@ const Contact = () => {
                 <div className="contact-info-title">
                   <h2>Phone Calls</h2>
                   <p>
-                    <a href="tel:+44 7441445045">+44 7441445045</a>
+                    <a href="tel:+44 7441445045">+91 7441445045</a>
                     <br />
-                    <a href="tel:+97 1555780884">+97 1555780884</a>
+                    <a href="tel:+97 1555780884">+91 8755780884</a>
                   </p>
                 </div>
               </div>
@@ -115,7 +100,7 @@ const Contact = () => {
                   <h2>E-Mail Address</h2>
                   <p>
                     <a href="mailto:globalpay517@gmail.com">
-                      globalpay517@gmail.com
+                      rahul@gmail.com
                     </a>
                   </p>
                 </div>
