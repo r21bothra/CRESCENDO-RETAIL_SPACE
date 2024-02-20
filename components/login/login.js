@@ -5,13 +5,13 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import Loading from "../layouts/Loading";
+import firebase from "firebase/compat/app";
+import { auth, db } from "../../config/Firebase";
+
 const Login = () => {
   const { user } = useSelector((state) => state.user);
   const [signup, setsignup] = React.useState({
     name: "",
-    email: "",
-    password: "",
-    referralCode: "",
   });
   const [login, setlogin] = React.useState({
     email: "",
@@ -34,59 +34,92 @@ const Login = () => {
     e.preventDefault();
 
     if (
-      signup.name.trim() == "" ||
-      signup.email.trim() == "" ||
-      signup.password.trim() == ""
+      signup.email.trim() == ""
+      // signup.password.trim() == ""
     ) {
       toast.error("Please fill all the fields");
       return;
     }
     setLoading(true);
-    await axios
-      .post(" api/auth/register", signup)
-      .then((doc) => {
-        toast.success("You have received OTP at " + signup.email);
-        setsignup({
-          name: "",
-          email: "",
-          password: "",
-          referralCode: "",
-        });
-        setLoading(false);
-        window.location.href = "/dashboard";
-      })
-      .catch((error) => {
-        setLoading(false);
-        toast.error(error.response.data.message);
-      });
+
+    const doc = await db
+      .collection("users")
+      .doc(signup.email)
+      .get();
+    if (doc.exists) {
+      toast.error("Email already exists");
+      return;
+    }
+    const data = {
+      email: signup.email,
+    };
+    //https://esturay-client.vercel.app/
+    const config = {
+      url: "http://localhost:3000/verify",
+      handleCodeInApp: true,
+    };
+
+    await auth.sendSignInLinkToEmail(signup.email, config);
+
+    toast.success(
+      `Email is sent to ${signup.email} Click the link to complete your Registration, also check Junk folder`
+    );
+    setLoading(false);
+    window.localStorage.setItem("emailForRegistration", JSON.stringify(data));
+    setsignup({
+      // name: "",
+      email: "",
+      // password: "",
+    });
   };
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     if (login.email.trim() != "" && login.password.trim() != "") {
       setLoading(true);
-      await axios
-        .post(" api/auth/login", login, {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-        })
-        .then((doc) => {
-          localStorage.setItem("token", doc.data.token);
-          console.log(doc.data);
-          toast.success("Login Successfull");
-          setlogin({
-            email: "",
-            password: "",
+      try {
+        await db
+          .collection("users")
+          // .where('uid', '==', user.email)
+          .doc(login.email)
+          .get()
+          .then((snapshot) => {
+            if (snapshot && snapshot.exists) {
+              separatedString = snapshot.data();
+              //use separatedString
+            }
+          })
+          .catch((error) => {
+            console.log(error);
           });
-          setLoading(false);
-          window.location.href = "/dashboard";
-        })
-        .catch((error) => {
-          console.log(error);
-          setLoading(false);
-          toast.error(error.response.data?.message ?? "email not found");
+        var role_data = JSON.stringify(separatedString.role);
+        var name_data = JSON.stringify(separatedString.name);
+        await auth
+          .signInWithEmailAndPassword(login.email, login.password)
+          .then((res) => {
+            dispatch(
+              loginSuccess({
+                name: name_data,
+                email: login.email,
+                role: role_data,
+              })
+            );
+            setlogin({
+              email: "",
+              password: "",
+            });
+            setLoading(false);
+            toast.success("Login Successful");
+            window.location.href = "/dashboard";
+          });
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+        setlogin({
+          email: "",
+          password: "",
         });
+        toast.error(login.email + " email not found");
+      }
     }
   };
   const handleChangelogin = (e) => {
@@ -163,17 +196,6 @@ const Login = () => {
                         <form action="#">
                           <div className="input-boxes">
                             <div className="input-box">
-                              <i className="fas fa-user"></i>
-                              <input
-                                name="name"
-                                onChange={handleChangesignup}
-                                type="text"
-                                value={signup.name}
-                                placeholder="Name"
-                                required
-                              />
-                            </div>
-                            <div className="input-box">
                               <i className="fas fa-envelope"></i>
                               <input
                                 name="email"
@@ -184,28 +206,7 @@ const Login = () => {
                                 required
                               />
                             </div>
-                            <div className="input-box">
-                              <i className="fas fa-lock"></i>
-                              <input
-                                name="password"
-                                onChange={handleChangesignup}
-                                type="password"
-                                value={signup.password}
-                                placeholder="Password"
-                                required
-                              />
-                            </div>
-                            <div className="input-box">
-                              <i className="fas fa-user"></i>
-                              <input
-                                type="text"
-                                name="referralCode"
-                                value={signup.referralCode}
-                                onChange={handleChangesignup}
-                                placeholder="Refferal Code (optional)"
-                                required
-                              />
-                            </div>
+
                             <div className="button input-box">
                               <input
                                 onClick={handleRegisterSubmit}

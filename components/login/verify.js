@@ -1,56 +1,74 @@
 /* eslint-disable @next/next/no-img-element */
-"use client";
-import axios from "axios";
+import { auth, db } from "../../config/Firebase";
 import React from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { loginSuccess } from "../../reducer";
 import { useDispatch } from "react-redux";
 import { useSearchParams } from "next/navigation";
 
-// export const getServerSideProps = async (context) => {
-//   const body = context.query.email;
-//   console.log(body, "body");
-//   return { props: { email: body } };
-// };
 const Otp = () => {
   const searchParams = useSearchParams();
 
-  const email = searchParams.get("email");
-  const [verifyotp, setsignup] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
+  // const email = searchParams.get("email");
+  const [email, setEmail] = React.useState("");
+  const [password, setpass] = React.useState("");
 
   const dispatch = useDispatch();
-  const handleverifyotp = (e) => {
+  React.useEffect(() => {
+    setEmail(JSON.parse(window.localStorage.getItem("emailForRegistration")));
+  }, []);
+
+  const handleverifyotp = async (e) => {
     e.preventDefault();
-    if (verifyotp.trim() == "") {
-      toast.error("Please fill all the fields");
+    if (!email.email || !password) {
+      toast.error("Password is required");
       return;
     }
-    setLoading(true);
-    axios
-      .post(` api/auth/verify-otp?email=${email}`, {
-        otp: verifyotp,
-      })
-      .then((doc) => {
-        dispatch(
-          loginSuccess({
-            email: doc.data.email,
-            name: doc.data.email.split("@")[0],
-            referralCode: doc.data.referralCode,
-            isVerified: doc.data.isVerified,
-            createdAt: doc.data.createdAt,
+    try {
+      const result = await auth.signInWithEmailLink(
+        email.email,
+        window.location.href
+      );
+      if (result.user.emailVerified) {
+        let user = auth.currentUser;
+        await user.updatePassword(password);
+        // const idTokenResult = await user.getIdTokenResult();
+        const date = new Date();
+
+        await db
+          .collection("users")
+          .doc(email.email)
+          .set({
+            name: email.email.split("@")[0],
+            role: "user",
+            date: date.toDateString(),
+            email: email.email,
+            url:
+              "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png",
           })
-        );
-        localStorage.setItem("token", doc.data.token);
-        setLoading(false);
-        toast.success("Login Successfull");
-        window.location.href = "/dashboard";
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-        toast.error(error.response.data.message ?? "email not found");
-      });
+          .then(async () => {
+            dispatch(
+              loginSuccess({
+                name: email.email.split("@")[0],
+                email: email.email,
+                date: date.toDateString(),
+                role: "user",
+                url:
+                  "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png",
+              })
+            );
+
+            window.localStorage.removeItem("emailForRegistration");
+            toast.success("successfully Register");
+            window.location.href = "/";
+          })
+          .catch();
+        // history.push("/");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Token expired!, Please try again");
+    }
   };
 
   return (
@@ -83,10 +101,10 @@ const Otp = () => {
                         <div className="input-box">
                           <i className="fas fa-user"></i>
                           <input
-                            name="otp"
-                            onChange={(e) => setsignup(e.target.value)}
-                            type="text"
-                            placeholder="OTP"
+                            name="password"
+                            onChange={(e) => setpass(e.target.value)}
+                            type="password"
+                            placeholder="Password"
                             required
                           />
                         </div>
