@@ -7,6 +7,7 @@ import Footer from "../components/footer/Footer";
 import SeoHead from "../components/seo/SeoHead";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { db } from "../config/Firebase";
 
 const Contact = () => {
   const [contact, setcontact] = React.useState({
@@ -20,7 +21,14 @@ const Contact = () => {
   };
   const handleContact = async (e) => {
     e.preventDefault();
-    
+    db.collection("contact").add({
+      name: contact.name,
+      email: contact.email,
+      subject: contact.subject,
+      message: contact.message,
+    });
+    alert("message sent!");
+    setcontact({ name: "", email: "", subject: "", message: "" });
   };
   return (
     <>
@@ -99,9 +107,7 @@ const Contact = () => {
                 <div className="contact-info-title">
                   <h2>E-Mail Address</h2>
                   <p>
-                    <a href="mailto:globalpay517@gmail.com">
-                      rahul@gmail.com
-                    </a>
+                    <a href="mailto:globalpay517@gmail.com">rahul@gmail.com</a>
                   </p>
                 </div>
               </div>

@@ -7,7 +7,6 @@ import * as FileSaver from "file-saver";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import { useSpring, animated, config } from "react-spring";
-import { loadStripe } from "@stripe/stripe-js";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
@@ -25,6 +24,7 @@ import {
 } from "recharts";
 import Link from "next/link";
 import { db } from "../config/Firebase";
+
 const map = (value, sMin, sMax, dMin, dMax) => {
   return dMin + ((value - sMin) / (sMax - sMin)) * (dMax - dMin);
 };
@@ -297,40 +297,7 @@ function MenuItem({ item: { id, title, notifications }, onClick, selected }) {
 function Content({ user, onSidebarHide }) {
   const dateObject = new Date(user && user.createdAt);
   const [topUserData, setTopUserdata] = useState([]);
-  useEffect(() => {
-    const fetchUserData = () => {
-      axios
-        .get(" api/auth/top-users", {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-        })
-        .then((doc) => {
-          setTopUserdata(doc.data.topUsers);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    fetchUserData();
-  }, []);
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    const fetchCurrencies = async () => {
-      await axios
-        .get(" api/auth/get-crypto-prices")
-        .then((response) => {
-          // Accessing the first 10 data values
-          const firstTenCurrencies = response.data;
-          setData(firstTenCurrencies);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    };
-    fetchCurrencies();
-  }, []);
+
   // Get the month, day, and year components from the date object
   const month = dateObject.toLocaleString("en-US", { month: "long" });
   const day = dateObject.getDate();
@@ -727,6 +694,37 @@ function TopCurrencies({ data }) {
 
 function Segmentation({ user }) {
   const [Transcation, setTranscation] = useState([]);
+  const [excelData, setExcelData] = useState(null);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get("/api/fetchfile").catch((err) => {
+  //         console.log(err);
+  //       });
+  //       const blob = await response.blob();
+
+  //       const reader = new FileReader();
+  //       reader.onload = () => {
+  //         const arrayBuffer = reader.result;
+  //         const workbook = XLSX.read(arrayBuffer, { type: "array" });
+  //         // Assuming the first sheet is the one you want to read
+  //         const sheetName = workbook.SheetNames[0];
+  //         const sheet = workbook.Sheets[sheetName];
+  //         const data = XLSX.utils.sheet_to_json(sheet);
+
+  //         setExcelData(data);
+  //       };
+
+  //       reader.readAsArrayBuffer(blob);
+  //     } catch (error) {
+  //       console.error("Error fetching or reading the Excel file:", error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
+
   useEffect(() => {
     const fetchUserData = async (user) => {
       await db
@@ -743,277 +741,56 @@ function Segmentation({ user }) {
           console.log(error);
         });
     };
-    if (user.id && user) {
+    if (user && user.email) {
       fetchUserData(user);
     }
   }, [user]);
 
   return (
-    <div
-      className="p-4 h-full"
-      style={{ scrollBehavior: "smooth", overflowY: "scroll" }}
-    >
-      <div className="flex justify-between items-center">
-        <div className="text-white font-bold">Transaction</div>
-
-        <Icon path="res-react-dash-options" className="w-2 h-2" />
-      </div>
-      <div>
-        {Transcation.length > 0 ? (
-          Transcation.map((item, idx) => (
-            <div
-              className="flex items-center mt-3"
-              key={idx}
-              style={{ justifyContent: "space-between", padding: "10px" }}
-            >
-              <div className="">{idx + 1}</div>
-              <div className="ml-2">{item.quantity} qty</div>
-              <div className="ml-2">{item.type}</div>
-              <div className="ml-2">{item.status}</div>
-              <div className="ml-2">
-                {new Date(item.updatedAt ?? item.date).toLocaleDateString()}
-              </div>
-              {/* <div className="flex-grow" /> */}
-              <div className="">
-                {`$ ${item.total_price}`}
-                <Icon
-                  path={"res-react-dash-country-up"}
-                  className="w-4 h-4 mx-3"
-                />
-              </div>
-
-              <Icon path="res-react-dash-options" className="w-2 h-2" />
-            </div>
-          ))
-        ) : (
-          <div className="text-white font-bold text-center">
-            <Link href="/stepper">Start</Link>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function PurchaseCoins({ user, data }) {
-  const [qnty, setqnty] = useState(0);
-  const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-  const stripePromise = loadStripe(publishableKey);
-  const [load, setload] = useState(false);
-  const handlepayment = async (e) => {
-    e.preventDefault();
-    if (qnty < 1) {
-      toast.error("Please Enter a valid amount");
-      return;
-    }
-
-    var updated = parseInt(user.coins) + parseInt(qnty);
-    if (user && user.email && user.isKYCApproved) {
-      setload(true);
-      const stripe = await stripePromise;
-      //https://gpay-backend.vercel.app
-      await axios
-        .post(" api/auth/buy-coin", {
-          user_id: user.id,
-          email: user.email,
-          total_price: qnty, //*usdt
-          quantity: qnty,
-        })
-        .then(async (res) => {
-          const checkoutSession = await axios.post(
-            "/api/create-stripe-session",
-            {
-              _id: res.data.id,
-              email: user.email,
-              updated_coins: updated,
-              user_id: user.id,
-              quantity: qnty,
-              usdt:
-                data[2].name == "Tether USDt"
-                  ? data[2].quote.USD.price.toFixed(1) * 83
-                  : 83,
-            }
-          );
-          const result = await stripe.redirectToCheckout({
-            sessionId: checkoutSession.data.id,
-          });
-          setload(false);
-          if (result.error) {
-            toast.error(result.error.message);
-          }
-        });
-    } else if (!user || !user.email) {
-      toast.error("Please Login to continue");
-    } else if (user && !user.isKycVerified) {
-      toast.error("Please complete KYC verification to continue");
-    }
-  };
-  const options = {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "numeric",
-    minute: "numeric",
-  };
-  const currDate = new Date().getTime();
-  const lastTime = new Date(user.withdraw).getTime();
-
-  const handlewidthdraw = async (e) => {
-    e.preventDefault();
-    // + 1 * 60 * 1000
-    if (qnty == 0) {
-      toast.error("You cannot withdraw zero coins");
-      return;
-    }
-    if (user.coins <= 0) {
-      toast.error("You do not have enough coins");
-      return;
-    }
-    if (currDate >= lastTime) {
-      await axios
-        .post(" api/auth/withdraw-request", {
-          email: user.email,
-          quantity: qnty,
-          user_id: user.id,
-          status: "pending",
-          total_price: qnty,
-          type: "withdraw",
-        })
-        .then(() => {
-          setqnty(0);
-          toast.success("Withdraw request Placed");
-          //window.location.reload();
-        })
-        .catch((err) => {
-          toast.error(err.response?.data.message);
-        });
-    } else {
-      toast.error(
-        `You can Withdraw after ${new Date(lastTime).toLocaleDateString(
-          "en",
-          options
-        )}`
-      );
-    }
-  };
-  return (
-    <div>
-      <div className="w-full h-20 add-component-head" />
+    <>
+      {console.log(excelData + "excelData")}
       <div
-        className="flex flex-col items-center"
-        style={{
-          transform: "translate(0, -60px)",
-        }}
+        className="p-4 h-full"
+        style={{ scrollBehavior: "smooth", overflowY: "scroll" }}
       >
-        <div
-          className=""
-          style={{
-            background: "#414455",
-            width: "80px",
-            height: "80px",
-            borderRadius: "999px",
-          }}
-        >
-          <img
-            src="https://assets.codepen.io/3685267/res-react-dash-rocket.svg"
-            alt=""
-            className="w-full h-full"
-          />
-        </div>
-        <div className="text-white font-bold mt-3">
-          Current Balance{" "}
-          <Icon path="res-react-dash-bull" className="w-8 h-8" />
-        </div>
+        <div className="flex justify-between items-center">
+          <div className="text-white font-bold">Transaction</div>
 
-        <animated.div
-          className={clsx("text-green-500", "font-bold", "text-lg")}
-        >
-          {(user && user.coins) || 0} GPay
-        </animated.div>
-        {/* <animated.div
-          className={clsx("text-green-500", "font-bold", "text-lg")}
-        >
-          Investment ${(user && user.coins) || 0}
-        </animated.div> */}
-        {/* <animated.div
-          className={clsx("text-green-500", "font-bold", "text-lg")}
-        >
-          Profit ${(user && user.coins) || 0} (16 months)
-        </animated.div> */}
-        <animated.div
-          className={clsx("text-green-500", "font-bold", "text-lg")}
-        >
-          <input
-            type="number"
-            name="company_website"
-            id="company_website"
-            value={qnty}
-            className="pl-12 py-2 pr-2 block w-full rounded-lg border-gray-300 bg-card"
-            placeholder="Gpay"
-            onChange={(e) => setqnty(e.target.value)}
-          />
-        </animated.div>
-        {/* <div className="mt-2">30 USDT</div>
-        <div className="mt-1">$30.14 USD</div> */}
-        <div className="flex flex-row gap-2">
-          <div
-            className="flex items-center p-3 mt-3"
-            style={{
-              background: "#2f49d1",
-              borderRadius: "15px",
-              padding: "8px 16px",
-              justifyContent: "center",
-              color: "white",
-              cursor: "pointer",
-            }}
-          >
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/6160/6160200.png"
-              className="w-5 h-5"
-            />
-            {!load ? (
-              <div className="ml-2" onClick={(e) => handlepayment(e)}>
-                BUY
+          <Icon path="res-react-dash-options" className="w-2 h-2" />
+        </div>
+        <div>
+          {Transcation.length > 0 ? (
+            Transcation.map((item, idx) => (
+              <div
+                className="flex items-center mt-3"
+                key={idx}
+                style={{ justifyContent: "space-between", padding: "10px" }}
+              >
+                <div className="">{idx + 1}</div>
+                <div className="ml-2">{item.product_name} qty</div>
+                <div className="ml-2">{item.category}</div>
+                <div className="ml-2">{item.price}</div>
+                <div className="ml-2">{item.season}</div>
+                {/* <div className="flex-grow" /> */}
+                <div className="">
+                  {`$ ${item.price}`}
+                  <Icon
+                    path={"res-react-dash-country-up"}
+                    className="w-4 h-4 mx-3"
+                  />
+                </div>
+
+                <Icon path="res-react-dash-options" className="w-2 h-2" />
               </div>
-            ) : (
-              <div className="ml-2">Redirecting...</div>
-            )}
-          </div>
-          <div
-            className="flex items-center p-3 mt-3"
-            style={{
-              background: "#2f49d1",
-              borderRadius: "15px",
-              padding: "8px 16px",
-              justifyContent: "center",
-              color: "white",
-              cursor: "pointer",
-            }}
-          >
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/5024/5024665.png"
-              className="w-5 h-5"
-            />
-
-            <div
-              className="ml-2"
-              onClick={(e) => {
-                currDate >= lastTime
-                  ? handlewidthdraw(e)
-                  : toast.error(
-                      `You can Withdraw after ${new Date(
-                        lastTime
-                      ).toLocaleDateString("en", options)}`
-                    );
-              }}
-            >
-              Withdraw
+            ))
+          ) : (
+            <div className="text-white font-bold text-center">
+              <Link href="/stepper">Start</Link>
             </div>
-          </div>
+          )}
         </div>
       </div>
-      <Toaster />
-    </div>
+    </>
   );
 }
 
