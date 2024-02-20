@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/alt-text */
 import { clsx } from "clsx";
+import * as FileSaver from "file-saver";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import { useSpring, animated, config } from "react-spring";
@@ -12,6 +13,22 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import Loading from "../components/layouts/Loading";
 import SeoHead from "../components/seo/SeoHead";
+import {
+  LineChart,
+  BarChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import Link from "next/link";
+const map = (value, sMin, sMax, dMin, dMax) => {
+  return dMin + ((value - sMin) / (sMax - sMin)) * (dMax - dMin);
+};
+const pi = Math.PI;
+const tau = 2 * pi;
 
 const sidebarItems = [
   [
@@ -23,6 +40,97 @@ const sidebarItems = [
 
 const Dashboard1 = () => {
   const { user } = useSelector((state) => state.user);
+  const [selectedInterval, setSelectedInterval] = useState("1d");
+  const [rawData, setRawdata] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+
+  const getLabelForInterval = (timestamp, interval) => {
+    const date = new Date(timestamp);
+
+    if (interval === "1d") {
+      return `${date.getHours()}:00`;
+    } else if (interval === "1w") {
+      return date.toLocaleDateString("en-US", { weekday: "short" });
+    } else if (interval === "1m") {
+      return date.toLocaleDateString("en-US", { month: "short" });
+    } else {
+      return date.getFullYear().toString();
+    }
+  };
+  var aggregatedData;
+  if (filteredData.length > 0) {
+    aggregatedData = filteredData.reduce((accumulator, item) => {
+      const label = getLabelForInterval(item.timestamp, selectedInterval);
+
+      // Check if the label is already in the accumulator
+      if (accumulator[label]) {
+        accumulator[label].revenue += item.total_price; // Aggregate revenue for the same label
+      } else {
+        accumulator[label] = {
+          name: label,
+          revenue: item.total_price,
+        };
+      }
+
+      return accumulator;
+    }, {});
+
+    // Convert the aggregated data back to an array for rendering the graph data
+  } else {
+    const generateLabels = (interval) => {
+      const date = new Date();
+
+      if (interval === "1d") {
+        return `${date.getHours()}:00`;
+      } else if (interval === "1w") {
+        return date.toLocaleDateString("en-US", { weekday: "short" });
+      } else if (interval === "1m") {
+        return date.toLocaleDateString("en-US", { month: "short" });
+      } else {
+        return date.getFullYear().toString();
+      }
+    };
+
+    // Dynamic labels based on the selected interval
+    const labels = generateLabels(selectedInterval);
+
+    // Generate dummy data with zero values
+    aggregatedData = [labels].reduce((accumulator, label) => {
+      accumulator[label] = {
+        name: label,
+        revenue: 0,
+      };
+      return accumulator;
+    }, {});
+  }
+  const graphData = Object.values(aggregatedData);
+  // Generate dummy data with zero values
+
+  useEffect(() => {
+    // Function to filter data based on the selected interval
+    const filterData = () => {
+      const now = new Date();
+      if (selectedInterval == "all") {
+        setFilteredData(rawData);
+        return;
+      }
+      let cutoffDate;
+
+      if (selectedInterval === "1d") {
+        cutoffDate = new Date(now - 1 * 24 * 60 * 60 * 1000); // 1 day ago
+      } else if (selectedInterval === "1w") {
+        cutoffDate = new Date(now - 7 * 24 * 60 * 60 * 1000);
+      } else if (selectedInterval === "1m") {
+        cutoffDate = new Date(now - 30 * 24 * 60 * 60 * 1000);
+      }
+
+      const filtered = rawData.filter(
+        (item) => new Date(item.timestamp) >= cutoffDate
+      );
+      setFilteredData(filtered);
+    };
+    filterData();
+  }, [selectedInterval, rawData]);
   const [showSidebar, onSetShowSidebar] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -69,6 +177,31 @@ const Dashboard1 = () => {
     </>
   );
 };
+function Graph({ selectedInterval, graphData, setSelectedInterval }) {
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const dataPoint = payload[0].payload;
+      return (
+        <div className="rounded-xl overflow-hidden tooltip-head">
+          {/* {console.log(dataPoint, "props")} */}
+          <div className="flex items-center  p-1">
+            <div className="">Sales</div>
+            <Icon path="res-react-dash-options" className="w-2 h-2" />
+          </div>
+          <div className="tooltip-body text-left p-1">
+            <div className="text-white font-bold">{dataPoint.name}</div>
+            <div className="text-white font-bold">
+              ${dataPoint.revenue.toFixed(1)}
+            </div>
+            {/* <div className="">
+              Expected Revenue ${dataPoint.expectedRevenue.toFixed(1)}
+            </div> */}
+          </div>
+        </div>
+      );
+    }
+  };
+}
 
 function Sidebar({ user, onSidebarHide, showSidebar }) {
   const [selected, setSelected] = useState("1");
@@ -277,18 +410,18 @@ function Content({ user, onSidebarHide }) {
             />
           );
         })}
-        <div className="w-full p-2 lg:w-2/3">
+        {/* <div className="w-full p-2 lg:w-2/3">
           <div className="rounded-lg bg-card sm:h-80 h-60">
             <KYCDataComponent user={user} />
           </div>
-        </div>
-        <div className="w-full p-2 lg:w-1/3">
+        </div> */}
+        {/* <div className="w-full p-2 lg:w-1/3">
           <div className="rounded-lg bg-card h-80">
             <PurchaseCoins user={user} data={data} />
           </div>
-        </div>
+        </div> */}
 
-        <div className="w-full p-2 lg:w-2/3">
+        <div className="w-full p-2 lg:w-full">
           <div className="rounded-lg bg-card h-80">
             <Segmentation user={user} />
           </div>
@@ -298,11 +431,11 @@ function Content({ user, onSidebarHide }) {
             <Satisfication />
           </div>
         </div> */}
-        <div className="w-full p-2 lg:w-1/3">
+        {/*<div className="w-full p-2 lg:w-1/3">
           <div className="rounded-lg bg-card overflow-hidden h-80">
             <TopCurrencies data={data} />
           </div>
-        </div>
+        </div>*/}
       </div>
     </div>
   );
@@ -344,8 +477,8 @@ function UserData({ type, data, subtitle, monthly }) {
             className={clsx("text-green-500", "font-bold", "text-lg")}
           >
             {type == "Investment" || type == "Profit"
-              ? "$" + data
-              : transactions.interpolate((i) => `${i.toFixed(0)}`)}
+              ? "$" + data ?? 0
+              : transactions.interpolate((i) => `${i.toFixed(0)}`) ?? 0}
           </animated.div>
         </div>
       </div>
@@ -650,7 +783,9 @@ function Segmentation({ user }) {
             </div>
           ))
         ) : (
-          <div className="text-white font-bold text-center">No Transaction</div>
+          <div className="text-white font-bold text-center">
+            <Link href="/stepper">Start</Link>
+          </div>
         )}
       </div>
     </div>

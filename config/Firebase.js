@@ -11,8 +11,9 @@ const firebaseConfig = {
   storageBucket: "retail-space-3de71.appspot.com",
   messagingSenderId: "997616003453",
   appId: "1:997616003453:web:10b148897f31d7f0e84414",
+  databaseURL: "gs://retail-space-3de71.appspot.com",
 };
-//databaseURL
+
 //measurementId
 
 // Initialize Firebase

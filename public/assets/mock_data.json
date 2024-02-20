@@ -1,0 +1,690 @@
+[
+    {
+      "id": 1,
+      "product_name": "Lays",
+      "space": 86,
+      "category": "Chips",
+      "price": 523.3,
+      "season": "All-Season",
+      "image": "https://www.example.com/image9.jpg"
+    },
+    {
+      "id": 2,
+      "product_name": "Banana Chips",
+      "space": 93,
+      "category": "Chips",
+      "price": 915.78,
+      "season": "All-Season",
+      "image": "https://www.example.com/image9.jpg"
+    },
+    {
+      "id": 3,
+      "product_name": "Kurkurey",
+      "space": 40,
+      "category": "Chips",
+      "price": 319.54,
+      "season": "Summer",
+      "image": "https://www.example.com/image878.jpg"
+    },
+    {
+      "id": 4,
+      "product_name": "Popcorn",
+      "space": 22,
+      "category": "Chips",
+      "price": 437.23,
+      "season": "Fall",
+      "image": "https://www.example.com/image4.jpg"
+    },
+    {
+      "id": 5,
+      "product_name": "Cheese Balls",
+      "space": 83,
+      "category": "Chips",
+      "price": 220.6,
+      "season": "Fall",
+      "image": "https://www.example.com/image0.jpg"
+    },
+    {
+      "id": 6,
+      "product_name": "Lindt",
+      "space": 81,
+      "category": "Chocolates",
+      "price": 945.54,
+      "season": "All-Season",
+      "image": "https://www.example.com/image62.jpg"
+    },
+    {
+      "id": 7,
+      "product_name": "Dairymilk",
+      "space": 88,
+      "category": "Chocolates",
+      "price": 985.52,
+      "season": "Fall",
+      "image": "https://www.example.com/image052.jpg"
+    },
+    {
+      "id": 8,
+      "product_name": "5star",
+      "space": 100,
+      "category": "Chocolates",
+      "price": 901.63,
+      "season": "Spring",
+      "image": "https://www.example.com/image487.jpg"
+    },
+    {
+      "id": 9,
+      "product_name": "Munch",
+      "space": 6,
+      "category": "Chocolates",
+      "price": 938.26,
+      "season": "Summer",
+      "image": "https://www.example.com/image410.jpg"
+    },
+    {
+      "id": 10,
+      "product_name": "Perk",
+      "space": 51,
+      "category": "Chocolates",
+      "price": 186.75,
+      "season": "Spring",
+      "image": "https://www.example.com/image916.jpg"
+    },
+    {
+      "id": 11,
+      "product_name": "Candy",
+      "space": 60,
+      "category": "Chocolates",
+      "price": 991.78,
+      "season": "Summer",
+      "image": "https://www.example.com/image62.jpg"
+    },
+    {
+      "id": 12,
+      "product_name": "Sprite",
+      "space": 60,
+      "category": "Drinks",
+      "price": 991.78,
+      "season": "Summer",
+      "image": "https://www.example.com/image62.jpg"
+    },
+    {
+      "id": 13,
+      "product_name": "Coke",
+      "space": 60,
+      "category": "Drinks",
+      "price": 991.78,
+      "season": "Summer",
+      "image": "https://www.example.com/image62.jpg"
+    },
+    {
+      "id": 14,
+      "product_name": "Pepsi",
+      "space": 60,
+      "category": "Drinks",
+      "price": 991.78,
+      "season": "Summer",
+      "image": "https://www.example.com/image62.jpg"
+    },
+    {
+      "id": 15,
+      "product_name": "Redbull",
+      "space": 60,
+      "category": "Drinks",
+      "price": 991.78,
+      "season": "Summer",
+      "image": "https://www.example.com/image62.jpg"
+    },
+    {
+      "id": 16,
+      "product_name": "Fanta",
+      "space": 60,
+      "category": "Drinks",
+      "price": 991.78,
+      "season": "Summer",
+      "image": "https://www.example.com/image62.jpg"
+    },
+    {
+      "id": 17,
+      "product_name": "Water",
+      "space": 60,
+      "category": "Drinks",
+      "price": 991.78,
+      "season": "Summer",
+      "image": "https://www.example.com/image62.jpg"
+    },
+    {
+      "id": 18,
+      "product_name": "Apple",
+      "space": 60,
+      "category": "Fruits",
+      "price": 991.78,
+      "season": "Summer",
+      "image": "https://www.example.com/image62.jpg"
+    },
+    {
+      "id": 19,
+      "product_name": "Mango",
+      "space": 60,
+      "category": "Fruits",
+      "price": 991.78,
+      "season": "Summer",
+      "image": "https://www.example.com/image62.jpg"
+    },
+    {
+      "id": 20,
+      "product_name": "Pear",
+      "space": 60,
+      "category": "Fruits",
+      "price": 991.78,
+      "season": "Summer",
+      "image": "https://www.example.com/image62.jpg"
+    },
+      {
+        "id": 21,
+        "product_name": "Wooden Train Set",
+        "space": 1,
+        "category": "Toys",
+        "price": 34.99,
+        "season": "Spring",
+        "image": "http://dummyimage.com/145x100.png/dddddd/000000",
+        "sales": 80,
+        "profit_margin": 42.67
+      },
+      {
+        "id": 22,
+        "product_name": "Soft Plush Teddy Bear",
+        "space": 2,
+        "category": "Toys",
+        "price": 19.99,
+        "season": "All-Season",
+        "image": "http://dummyimage.com/165x100.png/ff4444/ffffff",
+        "sales": 150,
+        "profit_margin": 30.05
+      },
+      {
+        "id": 23,
+        "product_name": "Lavender Bath Bombs",
+        "space": 3,
+        "category": "Beauty",
+        "price": 9.99,
+        "season": "Summer",
+        "image": "http://dummyimage.com/175x100.png/dddddd/000000",
+        "sales": 200,
+        "profit_margin": 48.90
+      },
+      {
+        "id": 24,
+        "product_name": "Stainless Steel Mixing Bowls",
+        "space": 4,
+        "category": "Home Goods",
+        "price": 29.99,
+        "season": "All-Season",
+        "image": "http://dummyimage.com/185x100.png/ff4444/ffffff",
+        "sales": 250,
+        "profit_margin": 60.21
+      },
+      {
+        "id": 25,
+        "product_name": "Magnetic Building Blocks",
+        "space": 2,
+        "category": "Toys",
+        "price": 39.99,
+        "season": "Spring",
+        "image": "http://dummyimage.com/195x100.png/dddddd/000000",
+        "sales": 120,
+        "profit_margin": 47.80
+      },
+      {
+        "id": 26,
+        "product_name": "Ceramic Coated Nonstick Cookware Set",
+        "space": 5,
+        "category": "Home Goods",
+        "price": 149.99,
+        "season": "Summer",
+        "image": "http://dummyimage.com/165x100.png/cc0000/ffffff",
+        "sales": 65,
+        "profit_margin": 55.35
+      },
+      {
+        "id": 27,
+        "product_name": "Aloe Vera Gel",
+        "space": 3,
+        "category": "Beauty",
+        "price": 12.99,
+        "season": "Fall",
+        "image": "http://dummyimage.com/175x100.png/ff4444/ffffff",
+        "sales": 180,
+        "profit_margin": 64.21
+      },
+      {
+        "id": 28,
+        "product_name": "Smartphone Holder for Car",
+        "space": 1,
+        "category": "Home Goods",
+        "price": 9.99,
+        "season": "All-Season",
+        "image": "http://dummyimage.com/185x100.png/dddddd/000000",
+        "sales": 300,
+        "profit_margin": 52.90
+      },
+        {
+          "id": 29,
+          "product_name": "Remote Control Car",
+          "space": 2,
+          "category": "Toys",
+          "price": 49.99,
+          "season": "All-Season",
+          "image": "http://dummyimage.com/155x100.png/ff4444/ffffff",
+          "sales": 100,
+          "profit_margin": 38.75
+        },
+        {
+          "id": 30,
+          "product_name": "Scented Candles Set",
+          "space": 3,
+          "category": "Home Goods",
+          "price": 19.99,
+          "season": "Fall",
+          "image": "http://dummyimage.com/145x100.png/dddddd/000000",
+          "sales": 150,
+          "profit_margin": 55.80
+        },
+        {
+          "id": 31,
+          "product_name": "Watercolor Paint Set",
+          "space": 1,
+          "category": "Toys",
+          "price": 14.99,
+          "season": "Spring",
+          "image": "http://dummyimage.com/135x100.png/ff4444/ffffff",
+          "sales": 200,
+          "profit_margin": 47.90
+        },
+        {
+          "id": 32,
+          "product_name": "Shower Gel Set",
+          "space": 4,
+          "category": "Beauty",
+          "price": 29.99,
+          "season": "All-Season",
+          "image": "http://dummyimage.com/125x100.png/dddddd/000000",
+          "sales": 80,
+          "profit_margin": 43.20
+        },
+        {
+          "id": 33,
+          "product_name": "LED String Lights",
+          "space": 5,
+          "category": "Home Goods",
+          "price": 24.99,
+          "season": "Summer",
+          "image": "http://dummyimage.com/115x100.png/ff4444/ffffff",
+          "sales": 120,
+          "profit_margin": 50.25
+        },
+        {
+          "id": 34,
+          "product_name": "Travel Size Toiletry Kit",
+          "space": 3,
+          "category": "Beauty",
+          "price": 9.99,
+          "season": "All-Season",
+          "image": "http://dummyimage.com/165x100.png/dddddd/000000",
+          "sales": 250,
+          "profit_margin": 62.15
+        },
+        {
+            "id": 34,
+            "product_name": "Bluetooth Earbuds",
+            "space": 2,
+            "category": "Electronics",
+            "price": 59.99,
+            "season": "All-Season",
+            "image": "http://dummyimage.com/155x100.png/ff4444/ffffff",
+            "sales": 180,
+            "profit_margin": 48.75
+          },
+          {
+            "id": 35,
+            "product_name": "Yoga Mat",
+            "space": 3,
+            "category": "Fitness",
+            "price": 29.99,
+            "season": "Spring",
+            "image": "http://dummyimage.com/145x100.png/dddddd/000000",
+            "sales": 120,
+            "profit_margin": 42.90
+          },
+          {
+            "id": 37,
+            "product_name": "Resistance Bands Set",
+            "space": 4,
+            "category": "Fitness",
+            "price": 34.99,
+            "season": "Fall",
+            "image": "http://dummyimage.com/125x100.png/dddddd/000000",
+            "sales": 150,
+            "profit_margin": 47.40
+          },
+          {
+            "id": 38,
+            "product_name": "Reusable Silicone Food Bags",
+            "space": 5,
+            "category": "Home Goods",
+            "price": 24.99,
+            "season": "All-Season",
+            "image": "http://dummyimage.com/115x100.png/ff4444/ffffff",
+            "sales": 200,
+            "profit_margin": 60.25
+          },
+          {
+            "id": 39,
+            "product_name": "Wireless Charging Pad",
+            "space": 2,
+            "category": "Electronics",
+            "price": 19.99,
+            "season": "Spring",
+            "image": "http://dummyimage.com/105x100.png/dddddd/000000",
+            "sales": 300,
+            "profit_margin": 52.70
+          },
+          {
+            "id": 40,
+            "product_name": "Foam Roller",
+            "space": 3,
+            "category": "Fitness",
+            "price": 14.99,
+            "season": "Summer",
+            "image": "http://dummyimage.com/195x100.png/ff4444/ffffff",
+            "sales": 180,
+            "profit_margin": 38.90
+          },
+          {
+            "id": 41,
+            "product_name": "Portable Blender",
+            "space": 1,
+            "category": "Home Goods",
+            "price": 39.99,
+            "season": "Fall",
+            "image": "http://dummyimage.com/185x100.png/dddddd/000000",
+            "sales": 220,
+            "profit_margin": 45.60
+          },
+          {
+            "id": 43,
+            "product_name": "Resistance Loop Bands",
+            "space": 3,
+            "category": "Fitness",
+            "price": 19.99,
+            "season": "Spring",
+            "image": "http://dummyimage.com/165x100.png/dddddd/000000",
+            "sales": 200,
+            "profit_margin": 48.90
+          },
+          {
+            "id": 44,
+            "product_name": "Wireless Headphones",
+            "space": 2,
+            "category": "Electronics",
+            "price": 79.99,
+            "season": "Summer",
+            "image": "http://dummyimage.com/155x100.png/ff4444/ffffff",
+            "sales": 120,
+            "profit_margin": 42.70
+          },
+          {
+            "id": 45,
+            "product_name": "Silicone Baking Mats",
+            "space": 5,
+            "category": "Home Goods",
+            "price": 14.99,
+            "season": "Fall",
+            "image": "http://dummyimage.com/145x100.png/dddddd/000000",
+            "sales": 180,
+            "profit_margin": 37.80
+          },
+          {
+            "id": 46,
+            "product_name": "Fitness Tracker Watch",
+            "space": 1,
+            "category": "Fitness",
+            "price": 49.99,
+            "season": "All-Season",
+            "image": "http://dummyimage.com/135x100.png/ff4444/ffffff",
+            "sales": 250,
+            "profit_margin": 60.10
+          },
+          {
+            "id": 47,
+            "product_name": "Smart LED Bulbs",
+            "space": 4,
+            "category": "Home Goods",
+            "price": 19.99,
+            "season": "Spring",
+            "image": "http://dummyimage.com/125x100.png/dddddd/000000",
+            "sales": 300,
+            "profit_margin": 52.50
+          },
+          {
+            "id": 48,
+            "product_name": "Portable Bluetooth Speaker",
+            "space": 2,
+            "category": "Electronics",
+            "price": 39.99,
+            "season": "Summer",
+            "image": "http://dummyimage.com/115x100.png/ff4444/ffffff",
+            "sales": 200,
+            "profit_margin": 46.80
+          },
+          {
+            "id": 49,
+            "product_name": "Foam Exercise Mat",
+            "space": 3,
+            "category": "Fitness",
+            "price": 24.99,
+            "season": "Fall",
+            "image": "http://dummyimage.com/105x100.png/dddddd/000000",
+            "sales": 220,
+            "profit_margin": 43.20
+          },
+          {
+            "id": 50,
+            "product_name": "Digital Kitchen Scale",
+            "space": 4,
+            "category": "Home Goods",
+            "price": 14.99,
+            "season": "All-Season",
+            "image": "http://dummyimage.com/195x100.png/dddddd/000000",
+            "sales": 180,
+            "profit_margin": 38.70
+          },
+          {
+            "id": 53,
+            "product_name": "Glass Food Storage Containers",
+            "space": 5,
+            "category": "Home Goods",
+            "price": 24.99,
+            "season": "Fall",
+            "image": "http://dummyimage.com/165x100.png/ff4444/ffffff",
+            "sales": 200,
+            "profit_margin": 42.80
+          },
+          {
+            "id": 54,
+            "product_name": "Running Shoes",
+            "space": 1,
+            "category": "Fitness",
+            "price": 59.99,
+            "season": "All-Season",
+            "image": "http://dummyimage.com/155x100.png/dddddd/000000",
+            "sales": 300,
+            "profit_margin": 55.20
+          },
+          {
+            "id": 56,
+            "product_name": "Electric Toothbrush",
+            "space": 2,
+            "category": "Home Goods",
+            "price": 39.99,
+            "season": "Summer",
+            "image": "http://dummyimage.com/135x100.png/dddddd/000000",
+            "sales": 220,
+            "profit_margin": 53.40
+          },
+          {
+            "id": 57,
+            "product_name": "Wireless Earbuds",
+            "space": 3,
+            "category": "Electronics",
+            "price": 49.99,
+            "season": "Fall",
+            "image": "http://dummyimage.com/125x100.png/ff4444/ffffff",
+            "sales": 250,
+            "profit_margin": 60.70
+          },
+          {
+            "id": 58,
+            "product_name": "Stainless Steel Water Bottle",
+            "space": 4,
+            "category": "Fitness",
+            "price": 19.99,
+            "season": "Spring",
+            "image": "http://dummyimage.com/155x100.png/dddddd/000000",
+            "sales": 200,
+            "profit_margin": 40.25
+          },
+          {
+            "id": 62,
+            "product_name": "Wireless Charging Stand",
+            "space": 3,
+            "category": "Electronics",
+            "price": 34.99,
+            "season": "Spring",
+            "image": "http://dummyimage.com/195x100.png/dddddd/000000",
+            "sales": 200,
+            "profit_margin": 48.90
+          },
+          {
+            "id": 63,
+            "product_name": "Travel Neck Pillow",
+            "space": 2,
+            "category": "Travel",
+            "price": 14.99,
+            "season": "Summer",
+            "image": "http://dummyimage.com/165x100.png/ff4444/ffffff",
+            "sales": 180,
+            "profit_margin": 33.60
+          },
+          {
+            "id": 65,
+            "product_name": "Solar Powered Outdoor Lights",
+            "space": 1,
+            "category": "Home Goods",
+            "price": 19.99,
+            "season": "All-Season",
+            "image": "http://dummyimage.com/185x100.png/ff4444/ffffff",
+            "sales": 250,
+            "profit_margin": 45.20
+          },
+          {
+            "id": 66,
+            "product_name": "Collapsible Travel Backpack",
+            "space": 4,
+            "category": "Travel",
+            "price": 24.99,
+            "season": "Spring",
+            "image": "http://dummyimage.com/195x100.png/dddddd/000000",
+            "sales": 200,
+            "profit_margin": 50.30
+          },
+          {
+            "id": 67,
+            "product_name": "Reusable Silicone Food Storage Bags",
+            "space": 3,
+            "category": "Home Goods",
+            "price": 14.99,
+            "season": "Summer",
+            "image": "http://dummyimage.com/155x100.png/ff4444/ffffff",
+            "sales": 180,
+            "profit_margin": 35.80
+          },
+          {
+            "id": 69,
+            "product_name": "Handheld Mini Fan",
+            "space": 5,
+            "category": "Electronics",
+            "price": 14.99,
+            "season": "All-Season",
+            "image": "http://dummyimage.com/175x100.png/ff4444/ffffff",
+            "sales": 250,
+            "profit_margin": 30.20
+          }, 
+          {
+            "id": 72,
+            "product_name": "LED Desk Lamp",
+            "space": 5,
+            "category": "Home Goods",
+            "price": 29.99,
+            "season": "Fall",
+            "image": "http://dummyimage.com/175x100.png/dddddd/000000",
+            "sales": 220,
+            "profit_margin": 50.30
+          },
+          {
+            "id": 82,
+            "product_name": "Insulated Lunch Bag",
+            "space": 4,
+            "category": "Home Goods",
+            "price": 12.99,
+            "season": "Spring",
+            "image": "http://dummyimage.com/185x100.png/dddddd/000000",
+            "sales": 200,
+            "profit_margin": 38.70
+          },
+          {
+            "id": 83,
+            "product_name": "Bluetooth Headphones",
+            "space": 2,
+            "category": "Electronics",
+            "price": 39.99,
+            "season": "Summer",
+            "image": "http://dummyimage.com/155x100.png/ff4444/ffffff",
+            "sales": 180,
+            "profit_margin": 45.90
+          },
+          {
+            "id": 84,
+            "product_name": "Glass Meal Prep Containers",
+            "space": 5,
+            "category": "Home Goods",
+            "price": 24.99,
+            "season": "Fall",
+            "image": "http://dummyimage.com/165x100.png/dddddd/000000",
+            "sales": 220,
+            "profit_margin": 52.40
+          },
+          {
+            "id": 88,
+            "product_name": "Portable Power Bank",
+            "space": 5,
+            "category": "Electronics",
+            "price": 24.99,
+            "season": "Fall",
+            "image": "http://dummyimage.com/175x100.png/dddddd/000000",
+            "sales": 220,
+            "profit_margin": 48.30
+          },
+          {
+            "id": 89,
+            "product_name": "Car Phone Mount",
+            "space": 1,
+            "category": "Electronics",
+            "price": 9.99,
+            "season": "All-Season",
+            "image": "http://dummyimage.com/185x100.png/ff4444/ffffff",
+            "sales": 250,
+            "profit_margin": 30.40
+          }
+          
+]
+      
