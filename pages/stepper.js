@@ -1,5 +1,5 @@
 import toast, { Toaster } from "react-hot-toast";
-import * as csvtojson from "csvtojson";
+
 import * as XLSX from "xlsx";
 import React, { useState } from "react";
 import SeoHead from "../components/seo/SeoHead";
@@ -120,11 +120,41 @@ const Stepper = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const convert = () => {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const content = e.target.result;
+
+        const workbook = XLSX.read(content, { type: "binary" });
+        const firstSheetName = workbook.SheetNames[0];
+        // console.log("firstSheetName", firstSheetName);
+        const excelData = XLSX.utils.sheet_to_json(
+          workbook.Sheets[firstSheetName]
+        );
+
+        if (excelData.length > 0) {
+          try {
+            console.log(excelData);
+            db.collection("history-file")
+              .doc(user.user.email)
+              .set({
+                data: excelData,
+                user: user.user.email,
+                created_at: new Date(),
+              });
+            flag = 1;
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      };
+      reader.readAsBinaryString(file);
+    };
+    convert();
     const storage = getStorage();
-    // const mountainsRef = ref(storage, file.name);
+
     const storageRef = ref(storage, file.name);
 
-    // const uploadTask = fileRef.put(file);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on(

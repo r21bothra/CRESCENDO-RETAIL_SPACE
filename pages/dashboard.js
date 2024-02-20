@@ -297,7 +297,29 @@ function MenuItem({ item: { id, title, notifications }, onClick, selected }) {
 function Content({ user, onSidebarHide }) {
   const dateObject = new Date(user && user.createdAt);
   const [topUserData, setTopUserdata] = useState([]);
+  const [Transcation, setTranscation] = useState([]);
 
+  useEffect(() => {
+    const fetchUserData = async (user) => {
+      await db
+        .collection("custom-data")
+        .doc(user.user.email)
+        .get()
+        .then((snapshot) => {
+          if (snapshot && snapshot.exists) {
+            const separatedString = snapshot.data();
+            setTranscation(separatedString);
+            //use separatedString
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    if (user && user.email) {
+      fetchUserData(user);
+    }
+  }, [user]);
   // Get the month, day, and year components from the date object
   const month = dateObject.toLocaleString("en-US", { month: "long" });
   const day = dateObject.getDate();
@@ -324,6 +346,7 @@ function Content({ user, onSidebarHide }) {
       subtitle: "Revenue after 16 months ",
     },
   ];
+
   return (
     <div className="flex w-full">
       <div className="w-full h-screen hidden sm:block sm:w-20 xl:w-60 flex-shrink-0">
@@ -388,7 +411,7 @@ function Content({ user, onSidebarHide }) {
 
         <div className="w-full p-2 lg:w-full">
           <div className="rounded-lg bg-card h-80">
-            <Segmentation user={user} />
+            <Segmentation user={user} Transcation={Transcation} />
           </div>
         </div>
         {/* <div className="w-full p-2 lg:w-1/3">
@@ -692,60 +715,7 @@ function TopCurrencies({ data }) {
   );
 }
 
-function Segmentation({ user }) {
-  const [Transcation, setTranscation] = useState([]);
-  const [excelData, setExcelData] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get("/api/fetchfile").catch((err) => {
-  //         console.log(err);
-  //       });
-  //       const blob = await response.blob();
-
-  //       const reader = new FileReader();
-  //       reader.onload = () => {
-  //         const arrayBuffer = reader.result;
-  //         const workbook = XLSX.read(arrayBuffer, { type: "array" });
-  //         // Assuming the first sheet is the one you want to read
-  //         const sheetName = workbook.SheetNames[0];
-  //         const sheet = workbook.Sheets[sheetName];
-  //         const data = XLSX.utils.sheet_to_json(sheet);
-
-  //         setExcelData(data);
-  //       };
-
-  //       reader.readAsArrayBuffer(blob);
-  //     } catch (error) {
-  //       console.error("Error fetching or reading the Excel file:", error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
-  useEffect(() => {
-    const fetchUserData = async (user) => {
-      await db
-        .collection("custom-data")
-        .get()
-        .then((snapshot) => {
-          if (snapshot && snapshot.exists) {
-            const separatedString = snapshot.data();
-            setTranscation(separatedString);
-            //use separatedString
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    if (user && user.email) {
-      fetchUserData(user);
-    }
-  }, [user]);
-
+function Segmentation({ user, Transcation }) {
   return (
     <>
       {console.log(excelData + "excelData")}
