@@ -24,6 +24,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import Link from "next/link";
+import { db } from "../config/Firebase";
 const map = (value, sMin, sMax, dMin, dMax) => {
   return dMin + ((value - sMin) / (sMax - sMin)) * (dMax - dMin);
 };
@@ -241,13 +242,10 @@ function Sidebar({ user, onSidebarHide, showSidebar }) {
           <div className="bg-sidebar-card-top rounded-xl w-full h-full flex items-center justify-start sm:justify-center xl:justify-start px-3 sm:px-0 xl:px-3">
             <Icon path="res-react-dash-sidebar-card" className="w-9 h-9 " />
             <div className="block sm:hidden xl:block ml-3">
-              <div className="text-sm font-bold text-white">Referral Code</div>
-              <div className="text-sm">
-                {(user && user.referralCode) || "GPay"}
-              </div>
+              <div className="text-sm font-bold text-white">RSpace</div>
             </div>
             <div className="block sm:hidden xl:block flex-grow" />
-            <svg
+            {/* <svg
               style={{ cursor: "pointer", fill: "white" }}
               onClick={() => {
                 navigator.clipboard.writeText(
@@ -259,7 +257,7 @@ function Sidebar({ user, onSidebarHide, showSidebar }) {
               viewBox="0 0 24 24"
             >
               <path d="M7 4V2H17V4H20.0066C20.5552 4 21 4.44495 21 4.9934V21.0066C21 21.5552 20.5551 22 20.0066 22H3.9934C3.44476 22 3 21.5551 3 21.0066V4.9934C3 4.44476 3.44495 4 3.9934 4H7ZM7 6H5V20H19V6H17V8H7V6ZM9 4V6H15V4H9Z"></path>
-            </svg>
+            </svg> */}
           </div>
         </div>
 
@@ -341,21 +339,21 @@ function Content({ user, onSidebarHide }) {
   const Data = [
     {
       _id: "1",
-      type: "Investment",
-      data: user.coins,
-      subtitle: "Total Investment",
+      type: "Product",
+      data: 0,
+      subtitle: "No of Product",
     },
     {
       _id: "2",
-      type: "Coin",
-      data: user.coins,
-      subtitle: "Total no of coins",
+      type: "Profit Margin",
+      data: 0,
+      subtitle: "Average Profit",
     },
     {
       _id: "3",
       type: "Profit",
-      data: user.coins + user.coins,
-      monthly: user.coins + user.coins / 16,
+      data: 0,
+      monthly: 0,
       subtitle: "Revenue after 16 months ",
     },
   ];
@@ -730,14 +728,19 @@ function TopCurrencies({ data }) {
 function Segmentation({ user }) {
   const [Transcation, setTranscation] = useState([]);
   useEffect(() => {
-    const fetchUserData = (user) => {
-      axios
-        .get(` api/auth/get-transcation/${user.id}`)
-        .then((doc) => {
-          setTranscation(doc.data.products);
+    const fetchUserData = async (user) => {
+      await db
+        .collection("custom-data")
+        .get()
+        .then((snapshot) => {
+          if (snapshot && snapshot.exists) {
+            const separatedString = snapshot.data();
+            setTranscation(separatedString);
+            //use separatedString
+          }
         })
-        .catch((err) => {
-          console.log(err);
+        .catch((error) => {
+          console.log(error);
         });
     };
     if (user.id && user) {
