@@ -32,7 +32,7 @@ const sidebarItems = [
   [
     { id: "0", title: "Home", notifications: false },
     { id: "1", title: "Dashboard", notifications: false },
-    // { id: "2", title: "KYC", notifications: false },
+    { id: "2", title: "AI-Chat", notifications: false },
   ],
 ];
 
@@ -432,6 +432,10 @@ function Sidebar({ user, onSidebarHide, showSidebar }) {
     if (selected === "0") {
       setSelected(selected);
       return (window.location.href = `/`);
+    }
+    if (selected === "2") {
+      setSelected(selected);
+      return (window.location.href = `/chatbot`);
     }
   }, [selected]);
 

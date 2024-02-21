@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 
 // Default value for some meta data
 const defaultMeta = {
-  title: "GPay",
-  siteName: "GPay",
+  title: "R Space",
+  siteName: "R Space",
   description: `\n* GPay is a decentralized finance (DeFi) platform that aims to bridge the gap between traditional finance and blockchain-based protocols. It does this by providing a suite of products that allow users to trade, earn, borrow, lend, and more with popular cryptocurrencies \n* `,
   // change base url of your web (without '/' at the end)
   url: "https://www.globpays.com/",
@@ -14,7 +14,7 @@ const defaultMeta = {
   // used in twitter, facebook, etc. card when link copied in tweet/status
   image:
     "https://res.cloudinary.com/dpwustwce/image/upload/v1699526332/favicon-32x32_dgh3z5.png",
-  author: "GPay",
+  author: "R Space",
 };
 
 /**

@@ -17,7 +17,7 @@ import SeoHead from "../components/seo/SeoHead";
 export default function Home() {
   return (
     <>
-      <SeoHead title="GPay" />
+      <SeoHead title="R Space" />
       <Header />
       <Mobile_Header />
       <Hero />

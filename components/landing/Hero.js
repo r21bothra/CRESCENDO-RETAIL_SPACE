@@ -59,9 +59,9 @@ const Hero = () => {
                 {/* <div className="hero-thumb-inner2 bounce-animate">
                   <img src="assets/images/resource/product-hero.png" alt="" />
                 </div> */}
-                <div className="hero-thumb-inner3 bounce-animate3">
+                {/* <div className="hero-thumb-inner3 bounce-animate3">
                   <img src="assets/images/slider/img3.png" alt="" />
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

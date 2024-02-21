@@ -1,5 +1,5 @@
 import toast, { Toaster } from "react-hot-toast";
-
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import * as XLSX from "xlsx";
 import React, { useState } from "react";
 import SeoHead from "../components/seo/SeoHead";
@@ -122,6 +122,11 @@ const Stepper = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const convert = () => {
+      var setcontent = [];
+      const splitter = new RecursiveCharacterTextSplitter({
+        chunkSize: 1000,
+        chunkOverlap: 200,
+      });
       const reader = new FileReader();
       reader.onload = async (e) => {
         const content = e.target.result;
@@ -132,7 +137,20 @@ const Stepper = () => {
         const excelData = XLSX.utils.sheet_to_json(
           workbook.Sheets[firstSheetName]
         );
+        const output = await splitter.createDocuments([content]);
+        setcontent = setcontent.concat(output);
 
+        console.log(content, "content");
+        fetch("http://localhost:3005/set_file_to_pinecone", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            email: user.user.email,
+            combinedContent: setcontent,
+          }),
+        });
         if (excelData.length > 0) {
           try {
             console.log(excelData);
@@ -143,7 +161,7 @@ const Stepper = () => {
                 user: user.user.email,
                 created_at: new Date(),
               });
-            flag = 1;
+            // flag = 1;
           } catch (e) {
             console.log(e);
           }
@@ -151,40 +169,69 @@ const Stepper = () => {
       };
       reader.readAsBinaryString(file);
     };
-    convert();
-    const storage = getStorage();
+    await convert();
+    setfile("");
+    setstage(2);
+    // function readFileAsText(files) {
+    //   return new Promise((resolve, reject) => {
+    //     var setcontent = [];
+    //     for (let i = 0; i < files.length; i++) {
+    //       const file = files[i];
+    //       const reader = new FileReader();
+    //       reader.onload = async (event) => {
+    //         try {
+    //           const content = event.target.result;
+    //           const output = await splitter.createDocuments([content]);
+    //           setcontent = setcontent.concat(output);
+    //           if (i == files.length - 1) {
+    //             resolve(setcontent);
+    //           }
+    //         } catch (error) {
+    //           console.error(`Error loading content from ${file.name}:`, error);
+    //         }
+    //       };
+    //       reader.onerror = () => {
+    //         reject(reader.error); // Reject with the error
+    //       };
+    //       // Read the file as text
+    //       reader.readAsText(file);
+    //     }
+    //   });
+    // }
+    // readFileAsText(file).then(async (content) => {
 
-    const storageRef = ref(storage, file.name);
+    // });
+    // const storage = getStorage();
 
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    // const storageRef = ref(storage, file.name);
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const uploadProgress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        // setProgress(uploadProgress);
-      },
-      (error) => {
-        console.error("Error uploading file:", error);
-      },
-      () => {
-        // Upload completed successfully
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log("File available at", downloadURL);
-          db.collection("files").add({
-            url: downloadURL,
-            filename: file.name,
-            user: user.user.email,
+    // const uploadTask = uploadBytesResumable(storageRef, file);
 
-            created_at: new Date(),
-          });
-        });
-        setfile("");
-        setstage(2);
-      }
-    );
+    // uploadTask.on(
+    //   "state_changed",
+    //   (snapshot) => {
+    //     const uploadProgress = Math.round(
+    //       (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+    //     );
+    //     // setProgress(uploadProgress);
+    //   },
+    //   (error) => {
+    //     console.error("Error uploading file:", error);
+    //   },
+    //   () => {
+    //     // Upload completed successfully
+    //     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+    //       console.log("File available at", downloadURL);
+    //       db.collection("files").add({
+    //         url: downloadURL,
+    //         filename: file.name,
+    //         user: user.user.email,
+
+    //         created_at: new Date(),
+    //       });
+    //     });
+    //   }
+    // );
   };
 
   return (
