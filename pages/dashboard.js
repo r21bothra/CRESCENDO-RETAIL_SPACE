@@ -5,13 +5,14 @@
 import { clsx } from "clsx";
 import * as FileSaver from "file-saver";
 import Head from "next/head";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useSpring, animated, config } from "react-spring";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import Loading from "../components/layouts/Loading";
 import SeoHead from "../components/seo/SeoHead";
+
 import {
   LineChart,
   BarChart,
@@ -25,17 +26,13 @@ import {
 import Link from "next/link";
 import { db } from "../config/Firebase";
 
-const map = (value, sMin, sMax, dMin, dMax) => {
-  return dMin + ((value - sMin) / (sMax - sMin)) * (dMax - dMin);
-};
 const pi = Math.PI;
-const tau = 2 * pi;
 
 const sidebarItems = [
   [
     { id: "0", title: "Home", notifications: false },
     { id: "1", title: "Dashboard", notifications: false },
-    { id: "2", title: "KYC", notifications: false },
+    // { id: "2", title: "KYC", notifications: false },
   ],
 ];
 
@@ -44,6 +41,117 @@ const Dashboard1 = () => {
   const [selectedInterval, setSelectedInterval] = useState("1d");
   const [rawData, setRawdata] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [Transcation, setTranscation] = useState([]);
+  const seasons = {
+    Summer: {
+      start: new Date(2024, 5, 21), // June 21st
+      end: new Date(2024, 8, 20), // September 20th
+    },
+    Fall: {
+      start: new Date(2024, 8, 21), // September 21st
+      end: new Date(2024, 11, 20), // December 20th
+    },
+    Spring: {
+      start: new Date(2024, 2, 19), // March 20th
+      end: new Date(2024, 5, 20), // June 20th
+    },
+  };
+  // const today = new Date();
+  // console.log("Today's date:", today);
+
+  // const findSeason = Object.keys(seasons).find((season) => {
+  //   const start = seasons[season].start;
+  //   const end = seasons[season].end;
+  //   console.log(`Checking ${season}: start=${start}, end=${end}`);
+  //   return today >= start && today <= end;
+  // });
+
+  // if (findSeason) {
+  //   console.log("Current season is:", findSeason);
+  // } else {
+  //   console.log("No matching season found for today.");
+  // }
+  const seas = ["Spring", "Summer", "Autumn", "Winter"];
+  function getRandomSeason() {
+    const randomIndex = Math.floor(Math.random() * seasons.length);
+    return seasons[randomIndex];
+  }
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchUserData = async (user) => {
+      await db
+        .collection("custom-data")
+        .doc(user.email)
+        .get()
+        .then(async (snapshot) => {
+          var arr = [];
+          if (snapshot && snapshot.exists) {
+            const separatedString = snapshot.data();
+
+            arr = [...separatedString.data];
+          }
+          await db
+            .collection("history-file")
+            .doc(user.email)
+            .get()
+            .then(async (snapshots) => {
+              if (snapshots && snapshots.exists) {
+                const separatedString = snapshots.data();
+                const raw = [...separatedString.data, ...arr];
+                var sorted = [...raw].sort(
+                  (a, b) => b.profit_margin - a.profit_margin
+                );
+
+                // const today = new Date();
+                // const findSeason = Object.keys(seasons).find((season) => {
+                //   return (
+                //     today >= seasons[season].start &&
+                //     today <= seasons[season].end
+                //   );
+                // });
+                // const selectedSeason = getRandomSeason();
+                var filteredProducts = sorted.filter(
+                  (product) => product.season == "Spring"
+                );
+                filteredProducts.push(
+                  sorted.filter((product) => product.season == "All-Season")
+                );
+
+                filteredProducts.push(
+                  sorted.filter(
+                    (product) =>
+                      product.season != "All-Season" &&
+                      product.season != "Spring"
+                  )
+                );
+
+                setRawdata(filteredProducts.flat());
+                // const maxSales = Math.max(
+                //   ...sorted.map((product) => product.sales)
+                // );
+                // const minSales = Math.min(
+                //   ...sorted.map((product) => product.sales)
+                // );
+                // const ratingScale = 5; // Assuming a rating scale from 1 to 5
+                // sorted.map((product, ind) => {
+                //   const normalizedSales =
+                //     (product.sales - minSales) / (maxSales - minSales);
+                //   sorted[ind].rating = Math.ceil(normalizedSales * ratingScale);
+                // });
+                setTranscation(filteredProducts.flat());
+                setLoading(false);
+              }
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    if (user && user.email) {
+      fetchUserData(user);
+    }
+  }, [user]);
 
   const getLabelForInterval = (timestamp, interval) => {
     const date = new Date(timestamp);
@@ -61,15 +169,15 @@ const Dashboard1 = () => {
   var aggregatedData;
   if (filteredData.length > 0) {
     aggregatedData = filteredData.reduce((accumulator, item) => {
-      const label = getLabelForInterval(item.timestamp, selectedInterval);
+      const label = getLabelForInterval(item.date, selectedInterval);
 
       // Check if the label is already in the accumulator
       if (accumulator[label]) {
-        accumulator[label].revenue += item.total_price; // Aggregate revenue for the same label
+        accumulator[label].revenue += item.price; // Aggregate revenue for the same label
       } else {
         accumulator[label] = {
           name: label,
-          revenue: item.total_price,
+          revenue: item.price,
         };
       }
 
@@ -104,6 +212,7 @@ const Dashboard1 = () => {
       return accumulator;
     }, {});
   }
+  console.log(aggregatedData);
   const graphData = Object.values(aggregatedData);
   // Generate dummy data with zero values
 
@@ -126,7 +235,7 @@ const Dashboard1 = () => {
       }
 
       const filtered = rawData.filter(
-        (item) => new Date(item.timestamp) >= cutoffDate
+        (item) => new Date(item.date) >= cutoffDate
       );
       setFilteredData(filtered);
     };
@@ -167,6 +276,10 @@ const Dashboard1 = () => {
             />
             <Content
               user={user}
+              selectedInterval={selectedInterval}
+              graphData={graphData}
+              setSelectedInterval={setSelectedInterval}
+              Transcation={Transcation}
               onSidebarHide={() => {
                 onSetShowSidebar(true);
               }}
@@ -182,11 +295,12 @@ function Graph({ selectedInterval, graphData, setSelectedInterval }) {
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const dataPoint = payload[0].payload;
+
       return (
         <div className="rounded-xl overflow-hidden tooltip-head">
           {/* {console.log(dataPoint, "props")} */}
           <div className="flex items-center  p-1">
-            <div className="">Sales</div>
+            <div className="">Revenue</div>
             <Icon path="res-react-dash-options" className="w-2 h-2" />
           </div>
           <div className="tooltip-body text-left p-1">
@@ -202,6 +316,111 @@ function Graph({ selectedInterval, graphData, setSelectedInterval }) {
       );
     }
   };
+  return (
+    <div className="flex p-4 h-full flex-col">
+      <div className="">
+        <div className="flex items-center">
+          <div className="font-bold text-white">Revenue</div>
+          <div className="flex-grow" />
+
+          <Icon path="res-react-dash-graph-range" className="w-4 h-4" />
+          <div className="ml-2 flex gap-2 ">
+            <button
+              className={clsx(
+                "px-2",
+                "rounded-lg",
+                selectedInterval == "1d" ? "text-primarycolor" : "text-card",
+                selectedInterval == "1d" ? "bg-blue-200" : "bg-primarycolor"
+              )}
+              onClick={() => setSelectedInterval("1d")}
+            >
+              1d
+            </button>
+            <button
+              className={clsx(
+                "px-2",
+                "rounded-lg",
+                selectedInterval == "1w" ? "text-primarycolor" : "text-card",
+                selectedInterval == "1w" ? "bg-blue-200" : "bg-primarycolor"
+              )}
+              onClick={() => setSelectedInterval("1w")}
+            >
+              1w
+            </button>
+            <button
+              className={clsx(
+                "px-2",
+                "rounded-lg",
+                selectedInterval == "1m" ? "text-primarycolor" : "text-card",
+                selectedInterval == "1m" ? "bg-blue-200" : "bg-primarycolor"
+              )}
+              onClick={() => setSelectedInterval("1m")}
+            >
+              1m
+            </button>
+            <button
+              className={clsx(
+                "px-2",
+                "rounded-lg",
+                selectedInterval == "all" ? "text-primarycolor" : "text-card",
+                selectedInterval == "all" ? "bg-blue-200" : "bg-primarycolor"
+              )}
+              onClick={() => setSelectedInterval("all")}
+            >
+              All
+            </button>
+          </div>
+        </div>
+        <div className="font-bold ml-5">
+          {graphData[0] && graphData[0].name} -{" "}
+          {graphData[graphData.length - 1] &&
+            graphData[graphData.length - 1].name}
+        </div>
+      </div>
+
+      <div className="flex-grow">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart width={500} height={300} data={graphData}>
+            <defs>
+              <linearGradient id="paint0_linear" x1="0" y1="0" x2="1" y2="0">
+                <stop stopColor="#6B8DE3" />
+                <stop offset="1" stopColor="#7D1C8D" />
+              </linearGradient>
+            </defs>
+            {/* <CartesianGrid
+              horizontal={false}
+              strokeWidth="6"
+              stroke="#424455"
+            /> */}
+            <XAxis
+              dataKey="name"
+              axisLine={false}
+              tickLine={false}
+              tickMargin={10}
+            />
+            <YAxis axisLine={false} tickLine={false} tickMargin={10} />
+            <Tooltip content={<CustomTooltip />} cursor={false} />
+            <Line
+              activeDot={false}
+              type="monotone"
+              dataKey="expectedRevenue"
+              stroke="#242424"
+              strokeWidth="3"
+              dot={false}
+              strokeDasharray="8 8"
+            />
+            <Line
+              type="monotone"
+              dataKey="revenue"
+              stroke="url(#paint0_linear)"
+              strokeWidth="4"
+              dot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
 }
 
 function Sidebar({ user, onSidebarHide, showSidebar }) {
@@ -209,10 +428,7 @@ function Sidebar({ user, onSidebarHide, showSidebar }) {
 
   useEffect(() => {
     if (selected === "1") return;
-    if (selected === "2") {
-      setSelected(selected);
-      return (window.location.href = `/dashboard/profile`);
-    }
+
     if (selected === "0") {
       setSelected(selected);
       return (window.location.href = `/`);
@@ -242,7 +458,9 @@ function Sidebar({ user, onSidebarHide, showSidebar }) {
           <div className="bg-sidebar-card-top rounded-xl w-full h-full flex items-center justify-start sm:justify-center xl:justify-start px-3 sm:px-0 xl:px-3">
             <Icon path="res-react-dash-sidebar-card" className="w-9 h-9 " />
             <div className="block sm:hidden xl:block ml-3">
-              <div className="text-sm font-bold text-white">RSpace</div>
+              <div className="text-sm font-bold text-white">
+                <Link href="/stepper">Start</Link>
+              </div>
             </div>
             <div className="block sm:hidden xl:block flex-grow" />
             {/* <svg
@@ -294,32 +512,16 @@ function MenuItem({ item: { id, title, notifications }, onClick, selected }) {
     </div>
   );
 }
-function Content({ user, onSidebarHide }) {
+function Content({
+  user,
+  onSidebarHide,
+  Transcation,
+  selectedInterval,
+  graphData,
+  setSelectedInterval,
+}) {
   const dateObject = new Date(user && user.createdAt);
-  const [topUserData, setTopUserdata] = useState([]);
-  const [Transcation, setTranscation] = useState([]);
 
-  useEffect(() => {
-    const fetchUserData = async (user) => {
-      await db
-        .collection("custom-data")
-        .doc(user.user.email)
-        .get()
-        .then((snapshot) => {
-          if (snapshot && snapshot.exists) {
-            const separatedString = snapshot.data();
-            setTranscation(separatedString);
-            //use separatedString
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    if (user && user.email) {
-      fetchUserData(user);
-    }
-  }, [user]);
   // Get the month, day, and year components from the date object
   const month = dateObject.toLocaleString("en-US", { month: "long" });
   const day = dateObject.getDate();
@@ -329,24 +531,29 @@ function Content({ user, onSidebarHide }) {
     {
       _id: "1",
       type: "Product",
-      data: 0,
+      data: Transcation.length > 0 && Transcation.length,
       subtitle: "No of Product",
     },
     {
       _id: "2",
       type: "Profit Margin",
-      data: 0,
+      data:
+        Transcation.reduce((sum, { price }) => sum + price, 0) /
+        Transcation.length,
+
       subtitle: "Average Profit",
     },
     {
       _id: "3",
-      type: "Profit",
-      data: 0,
-      monthly: 0,
-      subtitle: "Revenue after 16 months ",
+      type: " Revenue",
+      data: Transcation.reduce((sum, { price }) => sum + price, 0),
+      // monthly: 0,
+      subtitle: "Total Revenue",
     },
   ];
-
+  console.log(
+    Transcation.reduce((sum, { profit_margin }) => sum + profit_margin, 0)
+  );
   return (
     <div className="flex w-full">
       <div className="w-full h-screen hidden sm:block sm:w-20 xl:w-60 flex-shrink-0">
@@ -377,16 +584,6 @@ function Content({ user, onSidebarHide }) {
           </div>
         </div>
 
-        {topUserData.map(({ name, email, coins, createdAt, _id }) => (
-          <TopUserCard
-            key={_id}
-            name={name}
-            email={email}
-            coins={coins}
-            createdAt={createdAt}
-          />
-        ))}
-
         {Data.map((item) => {
           return (
             <UserData
@@ -398,11 +595,7 @@ function Content({ user, onSidebarHide }) {
             />
           );
         })}
-        {/* <div className="w-full p-2 lg:w-2/3">
-          <div className="rounded-lg bg-card sm:h-80 h-60">
-            <KYCDataComponent user={user} />
-          </div>
-        </div> */}
+
         {/* <div className="w-full p-2 lg:w-1/3">
           <div className="rounded-lg bg-card h-80">
             <PurchaseCoins user={user} data={data} />
@@ -419,11 +612,20 @@ function Content({ user, onSidebarHide }) {
             <Satisfication />
           </div>
         </div> */}
-        {/*<div className="w-full p-2 lg:w-1/3">
-          <div className="rounded-lg bg-card overflow-hidden h-80">
-            <TopCurrencies data={data} />
+        <div className="w-full p-2 lg:w-full">
+          <div className="rounded-lg bg-card sm:h-80 h-60">
+            <Graph
+              selectedInterval={selectedInterval}
+              graphData={graphData}
+              setSelectedInterval={setSelectedInterval}
+            />
           </div>
-        </div>*/}
+        </div>
+        <div className="w-full p-2 lg:w-full">
+          <div className="rounded-lg bg-card sm:h-80 h-60">
+            <Recommendation user={user} Transcation={Transcation} />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -431,11 +633,11 @@ function Content({ user, onSidebarHide }) {
 
 function UserData({ type, data, subtitle, monthly }) {
   // const dateObj = new Date(createdAt);
-  const { transactions } = useSpring({
-    transactions: data,
-    // barPlayhead: 1,
-    from: { transactions: 0 },
-  });
+  // const { transactions } = useSpring({
+  //   transactions: data,
+  //   // barPlayhead: 1,
+  //   from: { transactions: 0 },
+  // });
   // const month = dateObj.toLocaleString("en-US", { month: "long" });
   // const day = dateObj.getDate();
   // const year = dateObj.getFullYear();
@@ -452,7 +654,7 @@ function UserData({ type, data, subtitle, monthly }) {
                 </div>
               </div>
               <div className="text-sm ">
-                {monthly ? "Monthly Profit " + "$" + monthly.toFixed(2) : ""}{" "}
+                {monthly ? "Monthly Profit " + "$" + monthly : ""}{" "}
               </div>
             </div>
           </div>
@@ -464,218 +666,11 @@ function UserData({ type, data, subtitle, monthly }) {
           <animated.div
             className={clsx("text-green-500", "font-bold", "text-lg")}
           >
-            {type == "Investment" || type == "Profit"
-              ? "$" + data ?? 0
-              : transactions.interpolate((i) => `${i.toFixed(0)}`) ?? 0}
+            {/* {transactions.length > 1 &&
+              transactions.interpolate((i) => `${i.toFixed(0)}`)} */}
+            {data && data.toFixed(2)}
           </animated.div>
         </div>
-      </div>
-    </div>
-  );
-}
-function TopUserCard({ name, email, coins, createdAt }) {
-  const dateObj = new Date(createdAt);
-  const { transactions } = useSpring({
-    transactions: coins,
-    // barPlayhead: 1,
-    from: { transactions: 0 },
-  });
-  const month = dateObj.toLocaleString("en-US", { month: "long" });
-  const day = dateObj.getDate();
-  const year = dateObj.getFullYear();
-  const formattedDate = `${month} ${day}, ${year}`;
-  return (
-    <div className="w-full p-2 lg:w-1/3">
-      <div className="rounded-lg bg-card flex justify-between p-3 h-32">
-        <div className="">
-          <div className="flex items-center">
-            <div className="ml-2">
-              <div className="flex items-center">
-                <div className="mr-2 font-bold text-white">
-                  {name} <Icon path="res-react-dash-tick" />
-                </div>
-              </div>
-              <div className="text-sm ">{email} </div>
-            </div>
-          </div>
-
-          <div className="text-sm  mt-2">{`Joined on ${formattedDate}`}</div>
-        </div>
-        <div className="flex flex-col items-center">
-          <Icon path={"res-react-dash-bull"} className="w-8 h-8" />
-          <animated.div
-            className={clsx("text-green-500", "font-bold", "text-lg")}
-          >
-            {transactions.interpolate((i) => `${i.toFixed(0)}`)}
-          </animated.div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function KYCDataComponent({ user }) {
-  const CustomTooltip = () => (
-    <div className="rounded-xl overflow-hidden tooltip-head">
-      <div className="flex items-center justify-between p-2">
-        <div className="">Revenue</div>
-        <Icon path="res-react-dash-options" className="w-2 h-2" />
-      </div>
-      <div className="tooltip-body text-center p-3">
-        <div className="text-white font-bold">$1300.50</div>
-        <div className="">Revenue from 230 sales</div>
-      </div>
-    </div>
-  );
-  const [kyc, setkyc] = useState(false);
-  return (
-    <div className="flex p-4 h-full flex-col">
-      <div className="">
-        <div className="flex items-center">
-          <div className="font-bold text-white">KYC</div>
-          <div className="flex-grow" />
-
-          <Icon path="res-react-dash-graph-range" className="w-4 h-4" />
-          {!(user && user.isKYCApproved) || false ? (
-            <div className="ml-2 text-red-500">Not Verified</div>
-          ) : (
-            <div className="ml-2 text-green-500">Verified</div>
-          )}
-          <div className="ml-6 w-5 h-5 flex justify-center items-center rounded-full icon-background">
-            ?
-          </div>
-        </div>
-        {/* <div className="font-bold ml-5">Nov - July</div> */}
-      </div>
-      <div style={{ overflowY: "auto" }}>
-        <div className="dash-bg dash-pic">
-          <div
-            className=""
-            style={{
-              background: "#414455",
-              width: "80px",
-              height: "80px",
-              borderRadius: "999px",
-            }}
-          >
-            <img
-              style={{ borderRadius: "50%" }}
-              src="https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-              alt=""
-              referrerPolicy="no-referrer"
-              className="w-full h-full"
-            />
-          </div>
-        </div>
-        <div className="dash-main">
-          <div className="dash-pic">
-            <div
-              className="dash-sm"
-              style={{
-                background: "#414455",
-                width: "80px",
-                height: "80px",
-                borderRadius: "999px",
-              }}
-            >
-              <img
-                style={{ borderRadius: "50%" }}
-                src="https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-                alt=""
-                referrerPolicy="no-referrer"
-                className="w-full h-full"
-              />
-            </div>
-          </div>
-          <div className="flex items-baseline mt-2">
-            <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-            <div className="text-white">
-              Name
-              <br />
-              <span>{(user && user.name) || "No Data"} </span>
-            </div>
-          </div>
-          <div className="flex items-baseline mt-3">
-            <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
-            <div className="text-white">
-              Email
-              <br />
-              <span>{(user && user.email) || "No Data"}</span>
-            </div>
-          </div>
-          <div className="flex items-baseline mt-3">
-            <div className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></div>
-            <div className="text-white">
-              Phone
-              <br />
-              <span>{(user && user.phoneNo) || "No Data"}</span>
-            </div>
-          </div>
-          <div className="flex items-baseline mt-3">
-            <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
-            <div className="text-white">
-              Bank Name
-              <br />
-              <span>{(user && user.bankName) || "No Data"}</span>
-            </div>
-          </div>
-          <div className="flex items-baseline mt-3">
-            <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
-            <div className="text-white">
-              Account Number
-              <br />
-              <span>{(user && user.accountNo) || "No Data"}</span>
-            </div>
-          </div>
-        </div>
-        {!kyc ? (
-          <div className="flex  items-center p-3 mt-3 justify-center">
-            <div
-              style={{
-                background: "#2f49d1",
-                borderRadius: "15px",
-                padding: "8px 16px",
-                justifyContent: "center",
-                color: "white",
-                cursor: "pointer",
-              }}
-            >
-              {user && user.isDataUpdated ? (
-                user.isKYCApproved ? (
-                  <button
-                    onClick={() => {
-                      toast.success("Already Verified");
-                    }}
-                    className="ml-2"
-                  >
-                    Verified
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      toast.loading("Awaiting Approval", { duration: 3000 });
-                    }}
-                    className="ml-2"
-                  >
-                    Awaiting Approval
-                  </button>
-                )
-              ) : (
-                <button
-                  onClick={() => {
-                    // redirecting to kyc form page
-                    window.location.href = "/dashboard/profile";
-                  }}
-                  className="ml-2"
-                >
-                  Verify Now
-                </button>
-              )}
-            </div>
-          </div>
-        ) : (
-          ""
-        )}
       </div>
     </div>
   );
@@ -714,42 +709,146 @@ function TopCurrencies({ data }) {
     </div>
   );
 }
+function Recommendation({ user, Transcation }) {
+  const [recommed, setrecommend] = useState("");
+  useEffect(() => {
+    const handlerecommend = async () => {
+      if (Transcation[0]) {
+        console.log(Transcation[0].product_name);
+        let bodyContent = JSON.stringify(Transcation[0].product_name);
 
-function Segmentation({ user, Transcation }) {
+        await axios
+          .post(
+            "http://127.0.0.1:5000/recommendations",
+
+            bodyContent,
+
+            {
+              headers: {
+                Accept: "*/*",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+            setrecommend(JSON.parse(res.data));
+          });
+      }
+    };
+    handlerecommend();
+  }, [Transcation]);
   return (
     <>
-      {console.log(excelData + "excelData")}
+      {recommed ? (
+        <div
+          className="p-4 h-full"
+          style={{ scrollBehavior: "smooth", overflowY: "scroll" }}
+        >
+          <div className="flex justify-between items-center">
+            <div className="text-white font-bold">Recommendation</div>
+
+            <Icon path="res-react-dash-options" className="w-2 h-2" />
+            {/* <button onClick={handleDelete}>Delete</button> */}
+          </div>
+          <div>
+            <h2 style={{ color: "white" }}>
+              Based on you historical data here are some recommendation to boast
+              your sales {Object.keys(recommed).map((i) => i + " ,")}
+            </h2>
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
+    </>
+  );
+}
+function Segmentation({ user, Transcation }) {
+  const handleDelete = async () => {
+    await db
+      .collection("custom-data")
+      .doc(user.email)
+      .delete();
+    await db
+      .collection("history-file")
+      .doc(user.email)
+      .delete();
+    toast.success("Data Deleted!");
+    window.location.reload();
+  };
+
+  console.log(Transcation);
+  return (
+    <>
       <div
         className="p-4 h-full"
         style={{ scrollBehavior: "smooth", overflowY: "scroll" }}
       >
         <div className="flex justify-between items-center">
-          <div className="text-white font-bold">Transaction</div>
+          <div className="text-white font-bold">Inventory</div>
 
           <Icon path="res-react-dash-options" className="w-2 h-2" />
+          <button onClick={handleDelete}>Delete</button>
         </div>
         <div>
+          <div
+            className="flex items-center mt-3"
+            style={{ justifyContent: "space-around", padding: "10px" }}
+          >
+            <div className="">No</div>
+            <div style={{ flex: "0.2" }} className="ml-2">
+              Product Name
+            </div>
+            <div style={{ flex: "0.2" }} className="ml-2">
+              Category
+            </div>
+            <div style={{ flex: "0.2" }} className="ml-2">
+              Price
+            </div>
+            <div style={{ flex: "0.2" }} className="ml-2">
+              Season
+            </div>
+            <div style={{ flex: "0.2" }} className="ml-2">
+              Profit Margin
+            </div>
+            {/* <div style={{ flex: "0.2" }} className="ml-2">
+              Rating
+            </div> */}
+          </div>
           {Transcation.length > 0 ? (
             Transcation.map((item, idx) => (
               <div
                 className="flex items-center mt-3"
                 key={idx}
-                style={{ justifyContent: "space-between", padding: "10px" }}
+                style={{ justifyContent: "space-around", padding: "10px" }}
               >
                 <div className="">{idx + 1}</div>
-                <div className="ml-2">{item.product_name} qty</div>
-                <div className="ml-2">{item.category}</div>
-                <div className="ml-2">{item.price}</div>
-                <div className="ml-2">{item.season}</div>
+                <div style={{ flex: "0.2" }} className="ml-2">
+                  {item.product_name}
+                </div>
+                <div style={{ flex: "0.2" }} className="ml-2">
+                  {item.category}
+                </div>
+                <div style={{ flex: "0.2" }} className="ml-2">
+                  ${item.price.toFixed(2)}
+                </div>
+                <div style={{ flex: "0.2" }} className="ml-2">
+                  {item.season}
+                </div>
                 {/* <div className="flex-grow" /> */}
                 <div className="">
-                  {`$ ${item.price}`}
+                  {`${(item.profit_margin && item.profit_margin.toFixed(2)) ||
+                    0}%`}
                   <Icon
                     path={"res-react-dash-country-up"}
                     className="w-4 h-4 mx-3"
                   />
                 </div>
-
+                {/* <div style={{ flex: "0.2" }} className="ml-2">
+                  {item.rating}
+                </div> */}
                 <Icon path="res-react-dash-options" className="w-2 h-2" />
               </div>
             ))

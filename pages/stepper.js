@@ -73,7 +73,8 @@ const Stepper = () => {
     console.log(data);
     if (
       space - data.reduce((acc, curr) => acc + parseFloat(curr.space || 0), 0) <
-      0
+        0 ||
+      space == ""
     ) {
       toast.error("Space is in Negative");
       return;
@@ -441,6 +442,7 @@ const Stepper = () => {
                 }}
                 style={{
                   color: "white",
+                  fontSize: "20px",
                 }}
               >
                 Back
