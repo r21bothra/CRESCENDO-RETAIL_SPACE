@@ -6,6 +6,7 @@ import Mobile_Header from "../components/header/Mobile_Header";
 import SeoHead from "../components/seo/SeoHead";
 const BlogsDetails = () => {
   return (
+    (
     <>
       <SeoHead title="Login" />
       <Header />
@@ -13,7 +14,8 @@ const BlogsDetails = () => {
       <Login />
       {/* <Footer /> */}
     </>
-  );
+  )
+);
 };
 
 export default BlogsDetails;
